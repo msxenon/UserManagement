@@ -27,7 +27,7 @@
 
 <script>import axios from 'axios'
 export default {
-  name: 'HelloWorld',
+  name: 'Login',
   data () {
     return {
       msg: '',
@@ -53,8 +53,13 @@ export default {
             if (response.data.success === false) {
               alert('incorrect login data')
             } else {
-              console.log('helllo', response.data.id)
-              this.$router.push({ name: 'Users', query: { redirect: '/users' }, params: {thisuser: response.data.id} })
+              console.log('helllo', response.data)
+              let isAdmin = response.data.admin
+              if (isAdmin) {
+                this.$router.push({ name: 'UsersController', query: { redirect: '/users' }, params: {userData: response.data} })
+              } else {
+                this.$router.push({ name: 'Profile', query: { redirect: '/profile' }, params: {userData: response.data} })
+              }
             }
           })
           .catch(e => {

@@ -1,8 +1,8 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h2>Users Data</h2>
-    <div><button type="button" class="btn btn-primary" @click="addUser">Add new User</button></div>
+    <h2>Users Controller</h2>
+    <div><button type="button" class="btn btn-primary" @click="addUser">Add new User</button><button type="button" class="btn btn-primary" @click="logout">Logout</button></div>
     <div >
       <ul>
         <li   style="display: block" v-for="(item, index) in items" :key="index">
@@ -18,7 +18,7 @@
 <script>import axios from 'axios'
 
 export default {
-  name: 'HelloWorld',
+  name: 'Users',
   data () {
     return {
       msg: '',
@@ -48,9 +48,11 @@ export default {
     data () {
       return {
         thisuser: 0,
+        userData: {},
         postData_: {
           login: '',
-          password: ''
+          password: '',
+          isAdmin: false
         },
         user: {
           userId: 0
@@ -66,7 +68,8 @@ export default {
     addUser: function () {
       this.postData_.login = prompt('Please enter a username', 'Harry')
       this.postData_.password = prompt('Please enter password', '')
-
+      let x = prompt('Is it admin?y/n', 'n')
+      this.postData_.isAdmin = (x === 'y')
       if (this.postData_.login === '' || this.postData_.password === '') {
         alert('some data are missing')
       } else {
@@ -95,12 +98,23 @@ export default {
             console.log(1222, e)
           })
       }
+    },
+    logout: function () {
+      this.$router.push({name: 'Login', query: {redirect: '/'}})
     }
   },
   created:
     function () {
       this.getData()
-      this.thisuser = this.$route.params.thisuser
+      try {
+        this.thisuser = this.$route.params.userData.id
+        this.userData = this.$route.params.userData
+        if (this.userData.admin === false) {
+          this.$router.push({name: 'Login', query: {redirect: '/'}})
+        }
+      } catch (e) {
+        this.$router.push({name: 'Login', query: {redirect: '/'}})
+      }
     }
 }
 </script>
